@@ -28,10 +28,6 @@ services:
       traefik.http.routers.traefik_https.middlewares: basic-auth-global
       traefik.http.middlewares.basic-auth-global.basicauth.usersfile: /credentials.txt
       traefik.http.services.traefik_https.loadbalancer.server.port: 80
-      # Redirect root to subdomain
-      traefik.http.middlewares.domain.redirectregex.regex: ^https://ryveal.app/(.*)
-      traefik.http.middlewares.domain.redirectregex.replacement: https://home.ryveal.app/$${1}
-      traefik.http.middlewares.domain.redirectregex.permanent: true
     networks:
     - internalnetwork
 
@@ -56,8 +52,6 @@ services:
       KC_PROXY: passthrough
       KC_HOSTNAME_URL: https://login.localhost
       KC_HOSTNAME_ADMIN_URL: https://keycloak.localhost
-      # KC_HOSTNAME: login.localhost
-      # KS_HOSTNAME_PORT: 443
     expose:
       - 8080
     ports:
@@ -124,6 +118,7 @@ services:
       KEYCLOAK_INTERNAL_URL: http://keycloak:8080
       LOGIN_PATH: /auth/login
       LOGOUT_PATH: /auth/logout
+      POST_LOGIN_PATH: /
     labels:
       traefik.enable: true
       traefik.http.routers.portal.entrypoints: websecure

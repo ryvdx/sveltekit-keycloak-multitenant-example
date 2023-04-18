@@ -3,8 +3,8 @@ FROM node:18-alpine3.17 AS build
 # Purpose of phase 1 is to build the SvelteKit app using Vite.. need full npm install for dev/build dependencies
 WORKDIR /app
 COPY . .
-RUN npm install
-RUN npm run build
+RUN yarn install
+RUN yarn run build
 
 # Purpose of phase 2 is to build the production image
 FROM node:18-alpine3.17 AS deploy
@@ -13,7 +13,7 @@ RUN rm -rf ./*
 
 # Install only production dependencies
 COPY --from=build /app/package.json .
-RUN npm install --omit=dev
+RUN yarn install --omit=dev
 
 # copying over the SvelteKit app into the production build
 RUN mkdir -p ./build

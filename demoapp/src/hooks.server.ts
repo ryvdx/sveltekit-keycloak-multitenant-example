@@ -1,7 +1,7 @@
 import { sequence } from '@sveltejs/kit/hooks';
 import type { Handle } from "@sveltejs/kit";
-import { KeyCloakHandle } from "sveltekit-keyloak-multitenant";
-// import { KeyCloakHandle } from './lib/server/keycloakservice';
+// import { KeyCloakHandle } from "sveltekit-keyloak-multitenant";
+import { KeyCloakHandle } from "$lib/server/keycloakservice";
 import { env } from "$env/dynamic/private";
 
 // First handle authentication, then authorization
