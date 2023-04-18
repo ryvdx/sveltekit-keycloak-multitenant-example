@@ -1,0 +1,138 @@
+---
+version: '3.4'
+
+volumes:
+  postgres:
+
+services:
+
+  traefik:
+    image: traefik:v3.0
+    platform: linux/amd64
+    container_name: traefik
+    volumes:
+      - ./traefik/traefik.yaml:/etc/traefik/traefik.yaml
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/credentials.txt:/credentials.txt:ro
+    ports:
+    - 443:443
+    expose:
+      - 8080
+    labels:
+      # traefik dashboard access
+      traefik.enable: true
+      traefik.http.routers.traefik_https.rule: Host(`traefik.localhost`)
+      traefik.http.routers.traefik_https.entrypoints: websecure
+      traefik.http.routers.traefik_https.tls: true
+      traefik.http.routers.traefik_https.service: api@internal
+      traefik.http.routers.traefik_https.middlewares: basic-auth-global
+      traefik.http.middlewares.basic-auth-global.basicauth.usersfile: /credentials.txt
+      traefik.http.services.traefik_https.loadbalancer.server.port: 80
+      # Redirect root to subdomain
+      traefik.http.middlewares.domain.redirectregex.regex: ^https://ryveal.app/(.*)
+      traefik.http.middlewares.domain.redirectregex.replacement: https://home.ryveal.app/$${1}
+      traefik.http.middlewares.domain.redirectregex.permanent: true
+    networks:
+    - internalnetwork
+
+  keycloak:
+    image: keycloak/keycloak:20.0.3
+    container_name: keycloak
+    platform: linux/arm64
+    depends_on:
+      - postgres
+    command:
+      - -v start-dev
+      - --features admin-fine-grained-authz
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: sa
+      KC_DB_PASSWORD: S0meP@ssword
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: S0meP@ssword
+      PROXY_ADDRESS_FORWARDING: true
+      KEYCLOAK_VERSION: 20.0.3
+      KC_PROXY: passthrough
+      KC_HOSTNAME_URL: https://login.localhost
+      KC_HOSTNAME_ADMIN_URL: https://keycloak.localhost
+      # KC_HOSTNAME: login.localhost
+      # KS_HOSTNAME_PORT: 443
+    expose:
+      - 8080
+    ports:
+      - 8085:8080
+    restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.keycloak.service: keycloak
+      traefik.http.routers.keycloak.entrypoints: websecure
+      traefik.http.routers.keycloak.rule: Host(`keycloak.localhost`)
+      traefik.http.services.keycloak.loadbalancer.server.port: 8080
+      traefik.http.routers.keycloak.middlewares: redirect-to-https
+      traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
+      traefik.http.middlewares.keycloak.headers.browserxssfilter: true
+      traefik.http.middlewares.keycloak.headers.framedeny: true
+      traefik.http.routers.keycloak.tls: true
+
+      traefik.http.routers.keycloaklogin.service: keycloaklogin
+      traefik.http.routers.keycloaklogin.entrypoints: websecure
+      traefik.http.routers.keycloaklogin.rule: Host(`login.localhost`) # && Path(`/resources/`,`/realms/`)  # can we add a more specific rule only for auth routes? (non-admin routes)
+      traefik.http.services.keycloaklogin.loadbalancer.server.port: 8080
+      traefik.http.routers.keycloaklogin.middlewares: redirect-to-https
+      traefik.http.routers.keycloaklogin.tls: true
+    networks:
+      - internalnetwork
+
+  postgres:
+    image: postgres:15.2
+    container_name: postgres
+    restart: unless-stopped
+    platform: linux/arm64
+    hostname: postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: sa
+      POSTGRES_PASSWORD: S0meP@ssword
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./postgres:/docker-entrypoint-initdb.d:ro
+    expose:
+      - 5432
+    ports:
+      - 5433:5432
+    networks:
+      - internalnetwork
+    labels:
+      traefik.enable: true
+      traefik.tcp.routers.postgres.entrypoints: postgres
+      traefik.tcp.routers.postgres.rule: HostSNI(`*`)
+      traefik.tcp.services.postgres.loadbalancer.server.port: 5432
+
+  demoapp:
+    image: demoapp:latest
+    container_name: demoapp
+    expose:
+      - 3000
+    networks:
+      - internalnetwork
+    environment:
+      ORIGIN: https://portal.localhost
+      AUTH_SECRET: 7cccae96a7855f622ceb111b84952ead
+      AUTH_TRUST_HOST: true
+      KEYCLOAK_URL: https://login.localhost
+      KEYCLOAK_INTERNAL_URL: http://keycloak:8080
+      LOGIN_PATH: /auth/login
+      LOGOUT_PATH: /auth/logout
+    labels:
+      traefik.enable: true
+      traefik.http.routers.portal.entrypoints: websecure
+      traefik.http.routers.portal.rule: Host(`portal.localhost`)
+      traefik.http.services.portal.loadbalancer.server.port: 3000
+      traefik.http.routers.portal.tls: true
+      #traefik.http.middlewares.test-auth.forwardauth.address: https://login.localhost/realms/Ryveal
+      #traefik.http.middlewares.test-auth.forwardauth.trustForwardHeader: true
+
+networks:
+  internalnetwork:
+    name: internalnetwork

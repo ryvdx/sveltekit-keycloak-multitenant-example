@@ -1,0 +1,10 @@
+mustangs:
+  client_id: 'webapp'
+  client_secret: 'g5eRLp2qEXf4RpxSAy6tlL5xZkI8EtHe'
+  realm: 'mustangs'
+  email_domain: 'mustangs.com'
+camaros:
+  client_id: 'webapp'
+  client_secret: 'F2ihoufXnCvKQk7xhSQPoTU4LQ4wswRv'
+  realm: 'camaros'
+  email_domain: 'camaros.io'
