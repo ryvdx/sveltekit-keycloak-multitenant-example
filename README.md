@@ -29,4 +29,6 @@ For each realm:
 
 4. Update tenants.yaml and restart docker-compose
 
-
+5. Test the app:
+Open in browser: https://portal.localhost
+login with any users and their tenants created in step 3...

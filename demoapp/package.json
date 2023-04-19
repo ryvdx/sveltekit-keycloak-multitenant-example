@@ -29,6 +29,6 @@
 		"crypto-random-string": "^5.0.0",
 		"email-validator": "^2.0.4",
 		"jsonwebtoken": "^9.0.0",
-		"sveltekit-keyloak-multitenant": "^0.2.1"
+		"sveltekit-keyloak-multitenant": "^0.2.7"
 	}
 }
