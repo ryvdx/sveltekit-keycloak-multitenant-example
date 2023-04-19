@@ -1,27 +1,32 @@
 # sveltekit-keycloak-multitenant-example
 Sample SvelteKit app using sveltekit-keycloak-multitenant library in containerized environment.
-(Note: docker-compose is for M1 Mac running Arm... just comment platform lines in docker if not needed.)
+Example has SvelteKit app, Keycloak, Postgres DB for Keycloak behind Traefik reverse proxy.
+(Note: docker-compose is for M1 Mac, comment platform lines if not needed.)
 
-This sets up a dockerized network where the authentication provider, database, and sveltekit app are sitting behind a Traefik reverse proxy.
-
-1. Install dependencies
+1. Build the SvelteKit app
 ```
 cd demoapp
-npm install
+yarn run containerize
 ```
-2. Build and containerized the sveltekit app
-```
-npm run containerize
-```
-3. Run the example
+
+2. Run the monorepo
 ```
 cd ..
 docker-compose up -d
 ```
 
-4. Setup tenants
+3. Setup tenants in keycloak
+Open in browser: https://keycloak.localhost
+login:
+- username: admin
+- password: S0meP@ssword
+
+Create realms (tenants).
+For each realm:
+- create a client
+- Configure redirect for client back to app
+- create some testing roles, groups, users in KeyCloak
+
+4. Update tenants.yaml and restart docker-compose
 
 
-# example logins for traefik and keycloak
-username: admin
-password: S0meP@ssword

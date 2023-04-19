@@ -989,10 +989,10 @@ svelte@^3.54.0:
   resolved "https://registry.yarnpkg.com/svelte/-/svelte-3.58.0.tgz#d3e6f103efd6129e51c7d709225ad3b4c052b64e"
   integrity sha512-brIBNNB76mXFmU/Kerm4wFnkskBbluBDCjx/8TcpYRb298Yh2dztS2kQ6bhtjMcvUhd5ynClfwpz5h2gnzdQ1A==
 
-sveltekit-keyloak-multitenant@^0.1.31:
-  version "0.1.31"
-  resolved "https://registry.yarnpkg.com/sveltekit-keyloak-multitenant/-/sveltekit-keyloak-multitenant-0.1.31.tgz#be4cd18d1b6e3efb54fb20e19cfc1139809513ef"
-  integrity sha512-chKatNIczBujKoDDqfcImwtBCfyYWJke/21rkyYpcTN6A3SGDi/8zbnRZBegdPaCH+g4btvCZsuEhAvTolfQBQ==
+sveltekit-keyloak-multitenant@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/sveltekit-keyloak-multitenant/-/sveltekit-keyloak-multitenant-0.2.1.tgz#66451914c68913c4a2b2ea2b4911daa078dbbf87"
+  integrity sha512-PhQ0fnzjN6btRByxs2xckFHGW3uw0656lCdmLxL8rzv9uzRVbJLcjqoMIkUcnbP2jxh9F1/OyocUN148IcFctw==
   dependencies:
     jsonwebtoken "^9.0.0"
     yaml "^2.2.1"

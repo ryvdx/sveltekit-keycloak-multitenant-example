@@ -54,8 +54,6 @@ services:
       KC_HOSTNAME_ADMIN_URL: https://keycloak.localhost
     expose:
       - 8080
-    ports:
-      - 8085:8080
     restart: unless-stopped
     labels:
       traefik.enable: true
@@ -125,8 +123,6 @@ services:
       traefik.http.routers.portal.rule: Host(`portal.localhost`)
       traefik.http.services.portal.loadbalancer.server.port: 3000
       traefik.http.routers.portal.tls: true
-      #traefik.http.middlewares.test-auth.forwardauth.address: https://login.localhost/realms/Ryveal
-      #traefik.http.middlewares.test-auth.forwardauth.trustForwardHeader: true
 
 networks:
   internalnetwork:
