@@ -52,6 +52,8 @@ services:
       KC_PROXY: passthrough
       KC_HOSTNAME_URL: https://login.localhost
       KC_HOSTNAME_ADMIN_URL: https://keycloak.localhost
+    ports:
+      - 8085:8080 # only using for running app in dev/preview
     expose:
       - 8080
     restart: unless-stopped
@@ -117,6 +119,8 @@ services:
       LOGIN_PATH: /auth/login
       LOGOUT_PATH: /auth/logout
       POST_LOGIN_PATH: /
+    volumes:
+      - ./demoapp/tenants.yaml:/app/tenants.yaml
     labels:
       traefik.enable: true
       traefik.http.routers.portal.entrypoints: websecure
