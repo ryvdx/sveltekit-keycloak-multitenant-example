@@ -32,3 +32,8 @@ For each realm:
 5. Test the app:
 Open in browser: https://portal.localhost
 login with any users and their tenants created in step 3...
+
+
+# Build a new app from scratch with library
+Here is a video how to build a new SvelteKit app from scratch using the library.  You can containerize it following along this example.
+https://youtu.be/c60uTal3_lU
